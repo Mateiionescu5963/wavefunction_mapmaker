@@ -351,8 +351,7 @@ if __name__=="__main__":
         theWorld = update(theWorld,magnitude-1,i,magnitude)  
         theWorld = update(theWorld,i,magnitude-1,magnitude)  
             
-    
-    collapse_next.clear()
+            
     
     #choose a random tile to collapse first
     r1 = random.randint(0,magnitude-1)
@@ -368,9 +367,10 @@ if __name__=="__main__":
         while(True):
             if len(collapse_next)>0:
                 print(len(collapse_next))
+                print(collapse_next)
                 minPos = 999
                 for nx in collapse_next:
-                    if theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities<minPos:
+                    if theWorld[nx[0]][nx[1]].collapsed=="none" and theWorld[nx[0]][nx[1]].possibilities<minPos:
                         minPos=theWorld[nx[0]][nx[1]].possibilities
                 
                 if minPos==999:
@@ -385,7 +385,6 @@ if __name__=="__main__":
                         break
             else:
                 #brute force find another tile to collapse: rarely used but here to avoid infinite loops
-                print(">")
                 done = False
                 for i in range(magnitude):
                     for j in range(magnitude):
@@ -402,11 +401,11 @@ if __name__=="__main__":
                     break
             
             #prove to the user that we're still working and not infinite looping
-            # if it%250==0:
-                # print("|",end="")
-                # if it>=(magnitude**2 + 10*magnitude):
-                #       break
-            # it+=1
+            if it%250==0:
+                print("|",end="")
+                if it>=(magnitude**2 + 10*magnitude):
+                      break
+            it+=1
             
             # #a tile with 0 possibilities cannot be collapsed: reset and pray
             # if theWorld[r1][r2].possibilities==0:
@@ -418,7 +417,6 @@ if __name__=="__main__":
                 
             theWorld[r1][r2]=collapse(theWorld[r1][r2])
             theWorld = update(theWorld,r1,r2,magnitude)
-            
     except KeyboardInterrupt:
         pass
     

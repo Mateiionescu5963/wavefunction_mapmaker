@@ -239,55 +239,133 @@ def update(wo,x,y,size):
     
     for i in range(-1,2):
         for j in range(-1,2):
-            if((not (i==0 and j==0)) and (i==0 or j==0)):
+            if i==0 ^ j==0:
                 if(x+i in range(size) and y+j in range(size)):
-                    if wo[x+i][y+j].collapsed=="none":
-                        if current=="mountain":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":10,"hills":4,"coast":1,"ocean":1,"sand":2,"dunes":2})
-                        elif current == "grassland":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":14,"hills":1,"sand":1,"trees":4,"swamp":2,"lake":2,"tundra":1,"coast":1,"jungle":2})
-                        elif current == "sand":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":15,"grassland":3,"dunes":5,"coast":5,"mountain":2})
-                        elif current == "dunes":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"dunes":9,"sand":7,"mountain":2})
-                        elif current == "trees":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"trees":15,"grassland":4,"forest":6,"tundra":2,"lake":3})
-                        elif current == "forest":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":6,"trees":3,"deepWood":3})
-                        elif current == "deepWood":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepWood":2,"forest":1})
-                        elif current == "hills":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"hills":8,"mountain":2,"grassland":2,"trees":3,"tundra":1})
-                        elif current == "coast":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"coast":11,"sand":4,"swamp":4,"mountain":3,"tundra":3,"ocean":2,"grassland":5,"seaIce":1})
-                        elif current == "ocean":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"ocean":9,"coast":8,"deepOcean":1,"seaIce":10,"mountain":6})
-                        elif current == "deepOcean":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepOcean":1,"ocean":5,"seaIce":10})
-                        elif current == "swamp":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"swamp":5,"grassland":4,"coast":1})
-                        elif current == "jungle":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"jungle":2,"coast":1,"grassland":1})
-                        elif current == "tundra":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"tundra":8,"coast":2,"grassland":1,"trees":3,"hills":2})
-                        elif current == "seaIce":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"seaIce":11,"deepOcean":1,"ocean":5,"coast":5})
-                        elif current == "lake":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"lake":5,"trees":2,"grassland":3})
-                        else:
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"all":1})
-            
-                        
-                        #these tiles will have lower-energy superpositions than the rest 
-                        #set them aside to collapse first
-                        here = [x+i,y+j]
-                        if here not in collapse_next:
-                            collapse_next.append(here)
-
+                    if current=="mountain":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":10,"hills":4,"coast":1,"ocean":1,"sand":2,"dunes":2})
+                    elif current == "grassland":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":14,"hills":1,"sand":1,"trees":4,"swamp":2,"lake":2,"tundra":1,"coast":1,"jungle":2})
+                    elif current == "sand":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":15,"grassland":3,"dunes":5,"coast":5,"mountain":2})
+                    elif current == "dunes":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"dunes":9,"sand":7,"mountain":2})
+                    elif current == "trees":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"trees":15,"grassland":4,"forest":6,"tundra":2,"lake":3})
+                    elif current == "forest":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":6,"trees":3,"deepWood":3})
+                    elif current == "deepWood":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepWood":2,"forest":1})
+                    elif current == "hills":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"hills":8,"mountain":2,"grassland":2,"trees":3,"tundra":1})
+                    elif current == "coast":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"coast":11,"sand":4,"swamp":4,"mountain":3,"tundra":3,"ocean":2,"grassland":5,"seaIce":1})
+                    elif current == "ocean":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"ocean":9,"coast":8,"deepOcean":1,"seaIce":10,"mountain":6})
+                    elif current == "deepOcean":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepOcean":1,"ocean":5,"seaIce":10})
+                    elif current == "swamp":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"swamp":5,"grassland":4,"coast":1})
+                    elif current == "jungle":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"jungle":2,"coast":1,"grassland":1})
+                    elif current == "tundra":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"tundra":8,"coast":2,"grassland":1,"trees":3,"hills":2})
+                    elif current == "seaIce":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"seaIce":11,"deepOcean":1,"ocean":5,"coast":5})
+                    elif current == "lake":
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"lake":5,"trees":2,"grassland":3})
+                    else:
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"all":1})
+        
+                    
+                    #these tiles will have lower-energy superpositions than the rest 
+                    #set them aside to collapse first
+                    here = [x+i,y+j]
+                    if here not in collapse_next:
+                        collapse_next.append(here)
 
     
     return wo
                         
+    
+    
+def findBlob(wo,x,y,size):
+    blob = True
+    checked = []
+    non_coast = []
+    
+    checked.append((x,y))
+    
+    notDone = True
+    while(notDone):
+        adjacents = []
+        for pair in checked:
+            for i in range(-1,2):
+                for j in range(-1,2):
+                    nPair = (pair[0]+i,pair[1]+j)
+                    if nPair[0]<0 or nPair>=size:
+                        blob = False
+                    else:
+                        if nPair not in checked and nPair not in non_coast and nPair not in adjacents:
+                            adjacents.append(nPair)
+        
+        if len(adjacents)==0:
+            break
+        
+        for a in adjacents:
+            if not wo[a[0]][a[1]].collapsed=="coast" and wo[a[0]][a[1]].collapsed in water:
+                blob=False
+            elif wo[a[0]][a[1]].collapsed=="coast":
+                checked.append(a)
+            else:
+                non_coast.append(a)
+            
+
+    return (checked,blob)
+    
+    
+    
+    
+def blobfinding(wo,size):
+    print("\nCoast-Tile Blobfinding Enabled and Running:")
+    blobs = []
+    checked = []
+    for i in range(1,size-1):
+        for j in range(1,size-1):
+            if (i,j) not in checked:
+                if wo[i][j].collapsed=="coast":
+                    for k in range(-1,2):
+                        for l in range(-1,2):
+                            if k==0 ^ l==0:
+                                if wo[i+k][j+l].collapsed in land:
+                                    b=findBlob(wo,i,j,size)
+                                    for c in b[0]:
+                                        checked.append(c)
+                                    if b[1]:
+                                        for pair in b[0]:
+                                            blobs.append(pair)
+                                            print(str(float(i)/float(size-1))+"%",end="\r")
+    
+    print("",end="\n")
+    time = len(blobs)
+    c = 0
+    for bl in blobs:
+        wo[bl[0]][bl[1]].collapsed="none"
+        c+=1
+        print(str(float(c)/float(time))+"%",end="\r")
+        
+    print("",end="\n")
+    c = 0
+    for bl in blobs:
+        wo=reset(wo,bl[0],bl[1],size)
+        wo[bl[0]][bl[1]].states["coast"]=False
+        wo[bl[0]][bl[1]]=collapse(wo[bl[0]][bl[1]])
+        c+=1
+        print(str(float(c)/float(time))+"%",end="\r")
+        
+    return wo
+                        
+        
+    
     
 #poll the constant colors dictionary to convert tiles to rgb arrays
 def output(ls):
@@ -300,16 +378,24 @@ def output(ls):
         
         
 if __name__=="__main__":
+    #RUNTIME VARIABLES:
+    #size
+    magnitude = 100    
+    #do blobfinding algorithm after generation?
+    do_blobfinding = False
+    #float value percentages (each must be in range [0,0.5])
+    percentCold = 0.2
+    percentHot = 0.2
+    
+    
     
     #version control
-    f = None
-    name = None
-    try:
-        f = open("log.txt","r")
+    f = open("log.txt","r")
+    name="1"
+    
+    if f:
         name = f.read()
         f.close()
-    except FileNotFoundError:
-        name = "1"
     
     if name=="":
         name="1"
@@ -318,11 +404,11 @@ if __name__=="__main__":
     f.write(str(int(name)+1))
     f.close()
     
-    f = open("24_wfc_mm.py","r")
+    f = open("dnd_wavefunctioncollapse_mapmaker.py","r")
     thisFile = f.read()
     f.close()
     
-    f = open("./"+name+"_24_wfc_mm.py","w")
+    f = open("./versions/"+name+"_wfc_mm.py","w")
     f.write(thisFile)
     f.close()
     
@@ -330,9 +416,8 @@ if __name__=="__main__":
     
     
     
-    #size
-    magnitude = 100
-    theWorld = initWorld(magnitude,0.2,0.2)
+    
+    theWorld = initWorld(magnitude,percentCold,percentHot)
     
     for i in range(magnitude):
         for s in land:
@@ -351,12 +436,11 @@ if __name__=="__main__":
         theWorld = update(theWorld,magnitude-1,i,magnitude)  
         theWorld = update(theWorld,i,magnitude-1,magnitude)  
             
-    
-    collapse_next.clear()
+            
     
     #choose a random tile to collapse first
-    r1 = random.randint(0,magnitude-1)
-    r2 = random.randint(0,magnitude-1)
+    r1 = random.randint(1,magnitude-2)
+    r2 = random.randint(1,magnitude-2)
     
     theWorld[r1][r2]=collapse(theWorld[r1][r2])
     theWorld = update(theWorld,r1,r2,magnitude)              
@@ -367,10 +451,9 @@ if __name__=="__main__":
     try:
         while(True):
             if len(collapse_next)>0:
-                print(len(collapse_next))
                 minPos = 999
                 for nx in collapse_next:
-                    if theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities<minPos:
+                    if theWorld[nx[0]][nx[1]].collapsed=="none" and theWorld[nx[0]][nx[1]].possibilities<minPos:
                         minPos=theWorld[nx[0]][nx[1]].possibilities
                 
                 if minPos==999:
@@ -385,7 +468,6 @@ if __name__=="__main__":
                         break
             else:
                 #brute force find another tile to collapse: rarely used but here to avoid infinite loops
-                print(">")
                 done = False
                 for i in range(magnitude):
                     for j in range(magnitude):
@@ -402,27 +484,38 @@ if __name__=="__main__":
                     break
             
             #prove to the user that we're still working and not infinite looping
-            # if it%250==0:
-                # print("|",end="")
-                # if it>=(magnitude**2 + 10*magnitude):
-                #       break
-            # it+=1
+            if it%250==0:
+                print("|",end="")
+                if it>=(magnitude**2 + 10*magnitude):
+                      break
+            it+=1
             
             # #a tile with 0 possibilities cannot be collapsed: reset and pray
-            # if theWorld[r1][r2].possibilities==0:
-            #     theWorld=reset(theWorld,r1,r2,magnitude)      
-            #     resets+=1
-            #     if resets%10==0:
-            #         print("-",end="")
+            if theWorld[r1][r2].possibilities==0:
+                theWorld=reset(theWorld,r1,r2,magnitude)      
+                resets+=1
+                if resets%10==0:
+                    print("-",end="")
                 
                 
             theWorld[r1][r2]=collapse(theWorld[r1][r2])
             theWorld = update(theWorld,r1,r2,magnitude)
             
+            
+        if do_blobfinding:
+            theWorld=blobfinding(theWorld,magnitude)
+        
     except KeyboardInterrupt:
         pass
+        
     
-    #create image (don't change any of this: it works fine)
+    #save outputs 
+    f = open("./outputs/"+name+".txt","w")
+    f.write(str(theWorld))
+    f.close()
+    
+    
+    #esoteric image creation magic; (don't change any of this: it works fine and it would be best if it stayed that way)
     w, h = 4000, 4000
     data = np.zeros((h, w, 3), dtype=np.uint8)
     x=int(w/magnitude)

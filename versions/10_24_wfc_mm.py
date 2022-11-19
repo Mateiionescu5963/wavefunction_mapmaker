@@ -370,7 +370,7 @@ if __name__=="__main__":
                 print(len(collapse_next))
                 minPos = 999
                 for nx in collapse_next:
-                    if theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities<minPos:
+                    if theWorld[nx[0]][nx[1]].collapsed=="none" and theWorld[nx[0]][nx[1]].possibilities<minPos:
                         minPos=theWorld[nx[0]][nx[1]].possibilities
                 
                 if minPos==999:
@@ -382,6 +382,8 @@ if __name__=="__main__":
                         r1=nx[0]
                         r2=nx[1]
                         collapse_next.remove(nx)
+                        if nx in collapse_next:
+                            exit()
                         break
             else:
                 #brute force find another tile to collapse: rarely used but here to avoid infinite loops
@@ -418,7 +420,6 @@ if __name__=="__main__":
                 
             theWorld[r1][r2]=collapse(theWorld[r1][r2])
             theWorld = update(theWorld,r1,r2,magnitude)
-            
     except KeyboardInterrupt:
         pass
     
