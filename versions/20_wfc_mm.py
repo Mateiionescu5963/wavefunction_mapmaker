@@ -239,7 +239,7 @@ def update(wo,x,y,size):
     
     for i in range(-1,2):
         for j in range(-1,2):
-            if i==0 ^ j==0:
+            if((not (i==0 and j==0)) and (i==0 or j==0)):
                 if(x+i in range(size) and y+j in range(size)):
                     if current=="mountain":
                         wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":10,"hills":4,"coast":1,"ocean":1,"sand":2,"dunes":2})
@@ -258,9 +258,9 @@ def update(wo,x,y,size):
                     elif current == "hills":
                         wo[x+i][y+j]=single_update(wo[x+i][y+j],{"hills":8,"mountain":2,"grassland":2,"trees":3,"tundra":1})
                     elif current == "coast":
-                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"coast":11,"sand":4,"swamp":4,"mountain":3,"tundra":3,"ocean":2,"grassland":5,"seaIce":1})
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"coast":22,"sand":4,"swamp":4,"mountain":3,"tundra":3,"ocean":2,"grassland":5,"seaIce":1})
                     elif current == "ocean":
-                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"ocean":9,"coast":8,"deepOcean":1,"seaIce":10,"mountain":6})
+                        wo[x+i][y+j]=single_update(wo[x+i][y+j],{"ocean":9,"coast":2,"deepOcean":1,"seaIce":10,"mountain":6})
                     elif current == "deepOcean":
                         wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepOcean":1,"ocean":5,"seaIce":10})
                     elif current == "swamp":
@@ -302,53 +302,6 @@ def update(wo,x,y,size):
     
     return wo
                         
-    
-    
-def findBlob(wo,x,y,size):
-    blob = []
-    checked = []
-    checked.append((x,y))
-    
-    #TODO
-    
-    
-    return (checked,blob)
-    
-    
-    
-    
-def blobfinding(wo,size):
-    print("\nBlobfinding Enabled and Running")
-    blobs = []
-    checked = []
-    for i in range(1,size-1):
-        for j in range(1,size-1):
-            if (i,j) not in checked:
-                if wo[i][j].collapsed=="coast":
-                    for k in range(-1,2):
-                        for l in range(-1,2):
-                            if k==0 ^ l==0:
-                                if wo[i+k][j+l].collapsed in land:
-                                    b=findBlob(wo,i,j,size)
-                                    for c in b[0]:
-                                        checked.append(c)
-                                    if not len(b[1])==0:
-                                        for pair in b[1]:
-                                            blobs.append(pair)
-    
-    for bl in blobs:
-        wo[bl[0]][bl[1]].collapsed="none"
-        
-    for bl in blobs:
-        wo=reset(wo,bl[0],bl[1],size)
-        for w in water:
-            wo[bl[0]][bl[1]].states[w]=False
-        wo[bl[0]][bl[1]]=collapse(wo[bl[0]][bl[1]])
-        
-    return wo
-                        
-        
-    
     
 #poll the constant colors dictionary to convert tiles to rgb arrays
 def output(ls):
@@ -459,11 +412,11 @@ if __name__=="__main__":
         #prove to the user that we're still working and not infinite looping
         if it%250==0:
             print("|",end="")
-            if it>=(magnitude**2 + 10*magnitude):
-                  break
+            # if it>=(magnitude**2 + 5*magnitude):
+            #     break
         it+=1
         
-        # #a tile with 0 possibilities cannot be collapsed: reset and pray
+        #a tile with 0 possibilities cannot be collapsed: reset and pray
         if theWorld[r1][r2].possibilities==0:
             theWorld=reset(theWorld,r1,r2,magnitude)      
             resets+=1
@@ -473,9 +426,6 @@ if __name__=="__main__":
             
         theWorld[r1][r2]=collapse(theWorld[r1][r2])
         theWorld = update(theWorld,r1,r2,magnitude)
-        
-    #TODO
-    # theWorld=blobfinding(theWorld,magnitude)
         
     
     #create image (don't change any of this: it works fine)
