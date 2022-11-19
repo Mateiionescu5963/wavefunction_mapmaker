@@ -46,6 +46,7 @@ colors = {
         "none":[255,0,0]
     }
 
+#count the number of states that are possible
 def getPossibilities(ls):
     pos = 0
     for i in ls.values():
@@ -53,6 +54,7 @@ def getPossibilities(ls):
             pos+=1
     return pos
 
+#emergency reset a tile then update adjacent tiles to reacquire its restrictions
 def reset(wo,x,y,size):
     t = wo[x][y]
     wo[x][y]=tile(t.hot,t.cold)
@@ -69,6 +71,7 @@ def reset(wo,x,y,size):
     return wo
     
 
+#each tile has these attributes 
 class tile:
     def __init__(self, isHot, isCold):
         self.collapsed="none"
@@ -146,22 +149,27 @@ class tile:
 # [0][size] ------------ [size][size]
         
         
+#creates and returns an empty 2-D array of tiles
 def initWorld(size,percentCold,percentHot):
     w = []
     for i in range(size):
         col = []
         for j in range(size):
             new = None
+            #north and south poles
             if(j<=(size*(percentCold/2)) or j>=(size-(size*(percentCold/2)))):
                 new=tile(False,True)
+            #equator
             elif(j<=((size/2)+(size*(percentHot/2))) and j>=((size/2)-(size*(percentHot/2)))):
                 new=tile(True,False)
+            #the rest
             else:
                 new=tile(False,False)
             col.append(new)
         w.append(col)
     return w
 
+#collapse the uncertainty to a single state
 def collapse(t):
     assert(isinstance(t, tile))
     
@@ -198,7 +206,7 @@ def collapse(t):
                     cur+=1
     return t
               
-  
+#update a single tile's superposition
 def single_update(t,ls):
     if("all" in ls.keys()):
         t.possibilities=getPossibilities(t.states)
@@ -210,6 +218,8 @@ def single_update(t,ls):
         else:
             t.weights[k]=ls.get(k) + t.weights.get(k)
     
+    #the list "ls" provided contains superpositions that are allowable
+    #any states not in that list should be removed from the superposition
     for i in t.states.keys():
         if bool(t.states.get(i)) and (i not in ls.keys()):
             t.states[i]=False
@@ -218,6 +228,10 @@ def single_update(t,ls):
                
 
 collapse_next = []
+
+#update a collapsed tile's adjacent tiles
+#each dictionary key is a possible superposition of the adjacent states
+#the value of each key in the dictionary is the weight-- a heigher weight means a greater proportion of tiles will collapse to that state
 def update(wo,x,y,size):
     assert(type(x)==int and type(y)==int and x in range(size) and y in range(size))
     
@@ -263,10 +277,13 @@ def update(wo,x,y,size):
                         wo[x+i][y+j]=single_update(wo[x+i][y+j],{"all":1})
         
                     
+                    #these tiles will have lower-energy superpositions than the rest 
+                    #set them aside to collapse first
                     here = [x+i,y+j]
                     if here not in collapse_next:
                         collapse_next.append(here)
 
+    #attempt to disallow coasts acting like lakes
     if x+1 <size and x-1 >=0:
         if current in water and wo[x+1][y].collapsed in land:
             for w in water:
@@ -286,7 +303,7 @@ def update(wo,x,y,size):
     return wo
                         
     
-    
+#poll the constant colors dictionary to convert tiles to rgb arrays
 def output(ls):
     output = []
     for i in ls:
@@ -297,10 +314,11 @@ def output(ls):
         
         
 if __name__=="__main__":
+    #size
     magnitude = 100
     theWorld = initWorld(magnitude,0.2,0.2)
     
-    
+    #choose a random tile to collapse first
     r1 = random.randint(0,magnitude-1)
     r2 = random.randint(0,magnitude-1)
     
@@ -328,6 +346,7 @@ if __name__=="__main__":
                     collapse_next.remove(nx)
                     break
         else:
+            #brute force find another tile to collapse: rarely used but here to avoid infinite loops
             done = False
             for i in range(magnitude):
                 for j in range(magnitude):
@@ -339,21 +358,27 @@ if __name__=="__main__":
                         break
                 if done:
                     break
+            #if no uncollapsed tile was found, we're done
             if not done:
                 break
         
+        #prove to the user that we're still working and not infinite looping
         if it%250==0:
             print("|",end="")
             if it>=(magnitude**2 + 5*magnitude):
                 break
         it+=1
         
+        #a tile with 0 possibilities cannot be collapsed: reset and pray
         if theWorld[r1][r2].possibilities==0:
             theWorld=reset(theWorld,r1,r2,magnitude)
+            
+            
         theWorld[r1][r2]=collapse(theWorld[r1][r2])
         theWorld = update(theWorld,r1,r2,magnitude)
         
     
+    #create image (don't change any of this: it works fine)
     w, h = 4000, 4000
     data = np.zeros((h, w, 3), dtype=np.uint8)
     x=int(w/magnitude)
