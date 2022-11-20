@@ -265,7 +265,7 @@ def update(wo,x,y,size):
                         elif current == "trees":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"trees":15,"grassland":4,"forest":6,"tundra":2,"lake":8})
                         elif current == "forest":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":6,"trees":3,"deepWood":3,"lake":5})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":6,"trees":3,"deepWood":3})
                         elif current == "deepWood":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepWood":2,"forest":1})
                         elif current == "hills":
@@ -285,7 +285,7 @@ def update(wo,x,y,size):
                         elif current == "seaIce":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"seaIce":11,"deepOcean":1,"ocean":5,"coast":5})
                         elif current == "lake":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"lake":7,"trees":2,"grassland":3,"forest":1})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"lake":7,"trees":2,"grassland":3})
                         else:
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"all":1})
             
@@ -323,7 +323,7 @@ def findBlob(wo,x,y,size):
                                 adjacents.append(nPair)
         
         it+=1
-        if it%250==0:
+        if it%75==0:
             print("|",end="")
         if len(adjacents)==0:
             break

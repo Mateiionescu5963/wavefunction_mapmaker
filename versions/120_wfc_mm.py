@@ -323,7 +323,7 @@ def findBlob(wo,x,y,size):
                                 adjacents.append(nPair)
         
         it+=1
-        if it%250==0:
+        if it%75==0:
             print("|",end="")
         if len(adjacents)==0:
             break

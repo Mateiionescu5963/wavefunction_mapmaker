@@ -78,11 +78,11 @@ class tile:
         if isHot:
             self.states = {
                 "grassland":True, 
-                # "sand":True, 
+                "sand":True, 
                 # "dunes":True, 
                 "trees":True,
                 "forest":True,
-                "deepWood":True,
+                "deepWood":False,
                 "hills":True,
                 "mountains":True,
                 "coast":True,
@@ -97,7 +97,7 @@ class tile:
         elif isCold:
             self.states = {
                 "grassland":True, 
-                # "sand":False, 
+                "sand":False, 
                 # "dunes":False, 
                 "trees":True,
                 "forest":True,
@@ -118,17 +118,17 @@ class tile:
                 "grassland":True, 
                 # "sand":False, 
                 # "dunes":False, 
-                "trees":True,
-                "forest":True,
-                "deepWood":True,
+                # "trees":True,
+                # "forest":True,
+                # "deepWood":True,
                 "hills":True,
                 "mountains":True,
                 "coast":True,
                 "ocean":True,
                 # "deepOcean":True,
-                "swamp":True,
-                "jungle":False,
-                "tundra":False,
+                # "swamp":True,
+                # "jungle":False,
+                # "tundra":False,
                 "seaIce":False,
                 "lake":True
             }
@@ -255,25 +255,25 @@ def update(wo,x,y,size):
                 if(x+i>=0 and x+i<size and y+j>=0 and y+j<size):
                     if wo[x+i][y+j].collapsed=="none":
                         if current=="mountain":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":10,"hills":7,"coast":1,"ocean":1,"sand":2,"dunes":2})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":10,"hills":4,"coast":1,"ocean":1,"sand":2,"dunes":2})
                         elif current == "grassland":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":15,"hills":1,"sand":1,"trees":4,"swamp":2,"lake":11,"tundra":1,"coast":21,"jungle":2})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":15,"hills":1,"sand":1,"trees":4,"swamp":2,"lake":2,"tundra":1,"coast":1,"jungle":2})
                         elif current == "sand":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":15,"grassland":3,"dunes":5,"coast":5,"mountain":2})
                         elif current == "dunes":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"dunes":9,"sand":7,"mountain":2})
                         elif current == "trees":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"trees":15,"grassland":4,"forest":6,"tundra":2,"lake":8})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"trees":15,"grassland":4,"forest":6,"tundra":2,"lake":3})
                         elif current == "forest":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":6,"trees":3,"deepWood":3,"lake":5})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":6,"trees":3,"deepWood":3})
                         elif current == "deepWood":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepWood":2,"forest":1})
                         elif current == "hills":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"hills":4,"mountain":4,"grassland":9,"trees":9,"tundra":1})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"hills":8,"mountain":2,"grassland":2,"trees":3,"tundra":1})
                         elif current == "coast":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"coast":10,"sand":8,"swamp":4,"mountain":8,"tundra":3,"ocean":2,"grassland":18,"seaIce":1})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"coast":10,"sand":8,"swamp":4,"mountain":8,"tundra":3,"ocean":2,"grassland":8,"seaIce":1})
                         elif current == "ocean":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"ocean":11,"coast":8,"deepOcean":1,"seaIce":10,"mountain":6})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"ocean":9,"coast":8,"deepOcean":1,"seaIce":10,"mountain":6})
                         elif current == "deepOcean":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepOcean":1,"ocean":5,"seaIce":10})
                         elif current == "swamp":
@@ -285,7 +285,7 @@ def update(wo,x,y,size):
                         elif current == "seaIce":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"seaIce":11,"deepOcean":1,"ocean":5,"coast":5})
                         elif current == "lake":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"lake":7,"trees":2,"grassland":3,"forest":1})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"lake":5,"trees":2,"grassland":3})
                         else:
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"all":1})
             
@@ -323,7 +323,7 @@ def findBlob(wo,x,y,size):
                                 adjacents.append(nPair)
         
         it+=1
-        if it%250==0:
+        if it%10==0:
             print("|",end="")
         if len(adjacents)==0:
             break
@@ -402,7 +402,7 @@ def collapse_to_adj(wo,x,y,size):
 if __name__=="__main__":
     #RUNTIME VARIABLES:
     #size
-    magnitude = 200    
+    magnitude = 100    
     #do blobfinding algorithm after generation?
     do_blobfinding = True
     #float value percentages (each must be in range [0,0.5])
@@ -444,22 +444,21 @@ if __name__=="__main__":
     theWorld = initWorld(magnitude,percentCold,percentHot)
     
     for i in range(magnitude):
-        for j in [0,1]:
-            for s in land:
-                theWorld[j][i].states[s]=False
-                theWorld[i][j].states[s]=False
-                theWorld[magnitude-j-1][i].states[s]=False
-                theWorld[i][magnitude-j-1].states[s]=False
-                
-            theWorld[j][i]=collapse(theWorld[j][i])
-            theWorld[i][j]=collapse(theWorld[i][j])
-            theWorld[magnitude-j-1][i]=collapse(theWorld[magnitude-j-1][i])
-            theWorld[i][magnitude-j-1]=collapse(theWorld[i][magnitude-j-1])
+        for s in land:
+            theWorld[0][i].states[s]=False
+            theWorld[i][0].states[s]=False
+            theWorld[magnitude-1][i].states[s]=False
+            theWorld[i][magnitude-1].states[s]=False
             
-            theWorld = update(theWorld,j,i,magnitude)  
-            theWorld = update(theWorld,i,j,magnitude)  
-            theWorld = update(theWorld,magnitude-j-1,i,magnitude)  
-            theWorld = update(theWorld,i,magnitude-j-1,magnitude)  
+        theWorld[0][i]=collapse(theWorld[0][i])
+        theWorld[i][0]=collapse(theWorld[i][0])
+        theWorld[magnitude-1][i]=collapse(theWorld[magnitude-1][i])
+        theWorld[i][magnitude-1]=collapse(theWorld[i][magnitude-1])
+        
+        theWorld = update(theWorld,0,i,magnitude)  
+        theWorld = update(theWorld,i,0,magnitude)  
+        theWorld = update(theWorld,magnitude-1,i,magnitude)  
+        theWorld = update(theWorld,i,magnitude-1,magnitude)  
             
             
     
@@ -545,9 +544,7 @@ if __name__=="__main__":
             for i in range(magnitude):
                 for j in range(magnitude):
                     if theWorld[i][j].collapsed=="none":
-                        theWorld = collapse_to_adj(theWorld,i,j,magnitude)   
-                    elif theWorld[i][j].cold and theWorld[i][j].collapsed=="grassland":
-                        theWorld[i][j].collapsed="tundra"
+                        theWorld = collapse_to_adj(theWorld,i,j,magnitude)       
         
         
     except KeyboardInterrupt:
@@ -566,7 +563,7 @@ if __name__=="__main__":
     
     
     #esoteric image creation magic; (don't change any of this: it works fine and it would be best if it stayed that way)
-    w, h = 6400, 6400
+    w, h = 4000, 4000
     data = np.zeros((h, w, 3), dtype=np.uint8)
     x=int(w/magnitude)
     y=int(h/magnitude)
