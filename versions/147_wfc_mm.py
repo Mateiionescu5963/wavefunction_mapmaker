@@ -92,7 +92,7 @@ class tile:
                 "jungle":True,
                 "tundra":False,
                 "seaIce":False,
-                # "lake":False
+                "lake":False
             }
         elif isCold:
             self.states = {
@@ -111,7 +111,7 @@ class tile:
                 "jungle":False,
                 "tundra":True,
                 "seaIce":True,
-                # "lake":True
+                "lake":True
             }
         else:
             self.states = {
@@ -130,7 +130,7 @@ class tile:
                 "jungle":False,
                 "tundra":False,
                 "seaIce":False,
-                # "lake":True
+                "lake":True
             }
         self.weights = {}
         self.cold = isCold
@@ -281,9 +281,9 @@ def update(wo,x,y,size):
                         elif current == "jungle":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"jungle":2,"coast":1,"grassland":1,"forest":1})
                         elif current == "tundra":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"tundra":8,"coast":2,"grassland":1,"trees":3,"hills":2,"seaIce":2})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"tundra":8,"coast":2,"grassland":1,"trees":3,"hills":2})
                         elif current == "seaIce":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"seaIce":13,"deepOcean":1,"ocean":5,"coast":5,"tundra":5})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"seaIce":11,"deepOcean":1,"ocean":5,"coast":5})
                         elif current == "lake":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"lake":4,"trees":2,"grassland":3,"forest":1})
                         else:
@@ -304,9 +304,10 @@ def update(wo,x,y,size):
 def findBlob(wo,x,y,size,name,tileset):
     blob = True
     checked = []
-    non = []
+    non_coast = []
     
     checked.append((x,y))
+    it = 0
     
     while(True):
         adjacents = []
@@ -318,21 +319,23 @@ def findBlob(wo,x,y,size,name,tileset):
                         if nPair[0]<0 or nPair[0]>=size or nPair[1]<0 or nPair[1]>=size:
                             blob = False
                         else:
-                            if nPair not in checked and nPair not in non and nPair not in adjacents:
+                            if nPair not in checked and nPair not in non_coast and nPair not in adjacents:
                                 adjacents.append(nPair)
         
-        
+        it+=1
+        if it%(size**4)==0:
+            print("|",end="")
         if len(adjacents)==0:
             break
         
         for a in adjacents:
             if not wo[a[0]][a[1]].collapsed==name and wo[a[0]][a[1]].collapsed in tileset:
                 blob=False
-                non.append(a)
+                non_coast.append(a)
             elif wo[a[0]][a[1]].collapsed==name:
                 checked.append(a)
             else:
-                non.append(a)
+                non_coast.append(a)
             
     return (checked,blob)
     
@@ -343,14 +346,11 @@ def blobfinding(wo,size,name,tileset):
     print("Blobfinding Enabled and Running:")
     blobs = []
     checked = []
-    it = 0
     for i in range(1,size-1):
         for j in range(1,size-1):
             if (i,j) not in checked:
                 if wo[i][j].collapsed==name:
-                    it+=1
-                    if it%int(size)==0:
-                        print("|",end="")
+                    print("|",end="")
                     b=findBlob(wo,i,j,size,name,tileset)
                     for c in b[0]:
                         checked.append(c)
@@ -383,19 +383,13 @@ def output(ls):
     return output
 
 
-def get_adj(wo,x,y,size):
+def collapse_to_adj(wo,x,y,size):
     adj = []
     for i in range(-1,2):
         for j in range(-1,2):
-            if((not (i==0 and j==0)) and (i==0 or j==0)):
-                if x+i>=0 and x+i<size and y+j>=0 and y+j<size:
-                    if not wo[x+i][y+j].collapsed=="none":
-                        adj.append((x+i,y+j))
-    
-    return adj
-
-def collapse_to_adj(wo,x,y,size):
-    adj = get_adj(wo, x, y, size)
+            if x+i>=0 and x+i<size and y+j>=0 and y+j<size:
+                if not wo[x+i][y+j].collapsed=="none":
+                    adj.append((x+i,y+j))
                     
     r = random.randint(0,len(adj)-1)
     wo[x][y].collapsed=wo[adj[r][0]][adj[r][1]].collapsed
@@ -514,7 +508,8 @@ if __name__=="__main__":
                 #         break
             else:
                 #brute force find another tile to collapse: rarely used but here to avoid infinite loops
-                print(">",end="")
+                if it%250==0:
+                    print(">",end="")
                 done = False
                 for i in range(magnitude):
                     for j in range(magnitude):
@@ -531,7 +526,7 @@ if __name__=="__main__":
                     break
             
             #prove to the user that we're still working and not infinite looping
-            if it%int(magnitude*4)==0:
+            if it%250==0:
                 print("|",end="")
                 if it>=(magnitude**3 + 10*magnitude):
                       break
@@ -568,36 +563,14 @@ if __name__=="__main__":
             print("Excessive Island ",end="")
             theWorld=blobfinding(theWorld,magnitude,"grassland",land)
             #last pass
-            print("Running Last-Pass cleanup routine",end="")
             for i in range(magnitude):
                 for j in range(magnitude):
                     if theWorld[i][j].collapsed=="none":
                         theWorld = collapse_to_adj(theWorld,i,j,magnitude)   
-                    elif theWorld[i][j].collapsed=="coast":
-                        adj = get_adj(theWorld, i, j, magnitude)
-                        nnil = 0
-                        for a in adj:
-                            if theWorld[a[0]][a[1]].collapsed not in land:
-                                nnil+=1
-                        if nnil==len(adj):
-                            if theWorld[i][j].cold:
-                                nnilr = random.randint(0,1)
-                                if nnilr==0:
-                                    theWorld[i][j].collapsed="seaIce"
-                                else:
-                                    theWorld[i][j].collapsed="ocean"
-                            else:
-                                theWorld[i][j].collapsed="ocean"
-                                
                     elif theWorld[i][j].cold and theWorld[i][j].collapsed=="grassland":
                         theWorld[i][j].collapsed="tundra"
                     elif theWorld[i][j].hot and theWorld[i][j].collapsed=="deepwood":
                         theWorld[i][j].collapsed="jungle"
-                if i%int(magnitude/3)==0:
-                    print(".",end="")
-                    
-        print("")
-                    
         
         
     except KeyboardInterrupt:
@@ -631,5 +604,5 @@ if __name__=="__main__":
     img = Image.fromarray(data, 'RGB')
     img.save('./outputs/'+name+'.png')
     
-    print(name+".txt and .png files created\nDONE!!!")
+    print(name+".txt and .png files created")
                               

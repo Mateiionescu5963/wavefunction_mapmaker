@@ -387,10 +387,9 @@ def get_adj(wo,x,y,size):
     adj = []
     for i in range(-1,2):
         for j in range(-1,2):
-            if((not (i==0 and j==0)) and (i==0 or j==0)):
-                if x+i>=0 and x+i<size and y+j>=0 and y+j<size:
-                    if not wo[x+i][y+j].collapsed=="none":
-                        adj.append((x+i,y+j))
+            if x+i>=0 and x+i<size and y+j>=0 and y+j<size:
+                if not wo[x+i][y+j].collapsed=="none":
+                    adj.append((x+i,y+j))
     
     return adj
 

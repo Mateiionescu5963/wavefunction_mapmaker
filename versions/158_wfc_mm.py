@@ -387,10 +387,9 @@ def get_adj(wo,x,y,size):
     adj = []
     for i in range(-1,2):
         for j in range(-1,2):
-            if((not (i==0 and j==0)) and (i==0 or j==0)):
-                if x+i>=0 and x+i<size and y+j>=0 and y+j<size:
-                    if not wo[x+i][y+j].collapsed=="none":
-                        adj.append((x+i,y+j))
+            if x+i>=0 and x+i<size and y+j>=0 and y+j<size:
+                if not wo[x+i][y+j].collapsed=="none":
+                    adj.append((x+i,y+j))
     
     return adj
 
@@ -408,9 +407,9 @@ def collapse_to_adj(wo,x,y,size):
 if __name__=="__main__":
     #RUNTIME VARIABLES:
     #size
-    magnitude = 200    
+    magnitude = 100    
     #do blobfinding algorithm after generation?
-    do_blobfinding = True
+    do_blobfinding = False
     #float value percentages (each must be in range [0,0.5])
     percentCold = 0.2
     percentHot = 0.2
@@ -530,8 +529,11 @@ if __name__=="__main__":
                 if not done:
                     break
             
+            if it==400:
+                break
+            
             #prove to the user that we're still working and not infinite looping
-            if it%int(magnitude*4)==0:
+            if it%int(magnitude**2)==0:
                 print("|",end="")
                 if it>=(magnitude**3 + 10*magnitude):
                       break
@@ -581,11 +583,7 @@ if __name__=="__main__":
                                 nnil+=1
                         if nnil==len(adj):
                             if theWorld[i][j].cold:
-                                nnilr = random.randint(0,1)
-                                if nnilr==0:
-                                    theWorld[i][j].collapsed="seaIce"
-                                else:
-                                    theWorld[i][j].collapsed="ocean"
+                                theWorld[i][j].collapsed="seaIce"
                             else:
                                 theWorld[i][j].collapsed="ocean"
                                 

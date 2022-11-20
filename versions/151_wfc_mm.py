@@ -387,10 +387,9 @@ def get_adj(wo,x,y,size):
     adj = []
     for i in range(-1,2):
         for j in range(-1,2):
-            if((not (i==0 and j==0)) and (i==0 or j==0)):
-                if x+i>=0 and x+i<size and y+j>=0 and y+j<size:
-                    if not wo[x+i][y+j].collapsed=="none":
-                        adj.append((x+i,y+j))
+            if x+i>=0 and x+i<size and y+j>=0 and y+j<size:
+                if not wo[x+i][y+j].collapsed=="none":
+                    adj.append((x+i,y+j))
     
     return adj
 
@@ -531,7 +530,7 @@ if __name__=="__main__":
                     break
             
             #prove to the user that we're still working and not infinite looping
-            if it%int(magnitude*4)==0:
+            if it%int(magnitude)==0:
                 print("|",end="")
                 if it>=(magnitude**3 + 10*magnitude):
                       break
@@ -568,35 +567,22 @@ if __name__=="__main__":
             print("Excessive Island ",end="")
             theWorld=blobfinding(theWorld,magnitude,"grassland",land)
             #last pass
-            print("Running Last-Pass cleanup routine",end="")
             for i in range(magnitude):
                 for j in range(magnitude):
                     if theWorld[i][j].collapsed=="none":
                         theWorld = collapse_to_adj(theWorld,i,j,magnitude)   
                     elif theWorld[i][j].collapsed=="coast":
                         adj = get_adj(theWorld, i, j, magnitude)
-                        nnil = 0
                         for a in adj:
                             if theWorld[a[0]][a[1]].collapsed not in land:
-                                nnil+=1
-                        if nnil==len(adj):
-                            if theWorld[i][j].cold:
-                                nnilr = random.randint(0,1)
-                                if nnilr==0:
+                                if theWorld[i][j].cold:
                                     theWorld[i][j].collapsed="seaIce"
                                 else:
                                     theWorld[i][j].collapsed="ocean"
-                            else:
-                                theWorld[i][j].collapsed="ocean"
-                                
                     elif theWorld[i][j].cold and theWorld[i][j].collapsed=="grassland":
                         theWorld[i][j].collapsed="tundra"
                     elif theWorld[i][j].hot and theWorld[i][j].collapsed=="deepwood":
                         theWorld[i][j].collapsed="jungle"
-                if i%int(magnitude/3)==0:
-                    print(".",end="")
-                    
-        print("")
                     
         
         
@@ -631,5 +617,5 @@ if __name__=="__main__":
     img = Image.fromarray(data, 'RGB')
     img.save('./outputs/'+name+'.png')
     
-    print(name+".txt and .png files created\nDONE!!!")
+    print(name+".txt and .png files created")
                               
