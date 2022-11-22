@@ -8,6 +8,7 @@ Created on Thu Nov 17 20:50:04 2022
 import random
 from PIL import Image
 import numpy as np
+import math
 
 
 land = ["grassland", 
@@ -463,18 +464,14 @@ if __name__=="__main__":
     
     if name=="":
         name="1"
-    else:
-        name = str(int(name)+1)
     
     f = open("log.txt","w")
-    f.write(name)
+    f.write(str(int(name)+1))
     f.close()
     
     f = open("dnd_wavefunctioncollapse_mapmaker.py","r")
     thisFile = f.read()
     f.close()
-    
-    name = name+"_base"
     
     f = open("./versions/"+name+"_wfc_mm.py","w")
     f.write(thisFile)

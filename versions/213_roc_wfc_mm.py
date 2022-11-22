@@ -8,6 +8,7 @@ Created on Thu Nov 17 20:50:04 2022
 import random
 from PIL import Image
 import numpy as np
+import math
 
 
 land = ["grassland", 
@@ -104,7 +105,7 @@ class tile:
                 "hills":True,
                 "mountain":True,
                 "coast":True,
-                "ocean":False,
+                "ocean":True,
                 "swamp":False,
                 "jungle":False,
                 "tundra":True,
@@ -251,67 +252,24 @@ def update(wo,x,y,size):
             if((not (i==0 and j==0)) and (i==0 or j==0)):
                 if(x+i>=0 and x+i<size and y+j>=0 and y+j<size):
                     if wo[x+i][y+j].collapsed=="none":
-                        if current == "grassland":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":15,"hills":1,"trees":4,"tundra":1,"coast":21,"jungle":2})
-                        elif current == "trees":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"trees":8,"grassland":4,"forest":6,"tundra":2})
-                        elif current == "forest":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":6,"trees":3,"deepWood":3,"hills":4,"jungle":1})
-                        elif current == "deepWood":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepWood":2,"forest":1,"hills":1})
-                        elif current == "hills":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"hills":4,"grassland":9,"trees":9,"tundra":1})
-                        elif current == "coast":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"coast":10,"tundra":3,"ocean":2,"grassland":18,"seaIce":1})
-                        elif current == "ocean":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"ocean":11,"coast":8,"seaIce":10})
-                        elif current == "jungle":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"jungle":2,"coast":1,"grassland":1,"forest":1})
-                        elif current == "tundra":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"tundra":8,"coast":2,"grassland":1,"trees":3,"hills":2,"seaIce":2})
-                        elif current == "seaIce":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"seaIce":13,"ocean":5,"coast":5,"tundra":5})
-                        else:
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"all":1})
-            
-                        
-                        #these tiles will have lower-energy superpositions than the rest 
-                        #set them aside to collapse first
-                        here = [x+i,y+j]
-                        if here not in collapse_next:
-                            collapse_next.append(here)
-
-    
-    return wo
-
-def updateSecondary(wo,x,y,size):
-    assert(type(x)==int and type(y)==int and x in range(size) and y in range(size))
-    
-    current = wo[x][y].collapsed
-    
-    for i in range(-1,2):
-        for j in range(-1,2):
-            if((not (i==0 and j==0)) and (i==0 or j==0)):
-                if(x+i>=0 and x+i<size and y+j>=0 and y+j<size):
-                    if wo[x+i][y+j].collapsed=="none":
                         if current=="mountain":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":9,"hills":4,"coast":1,"sand":0,"dunes":3})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":8,"hills":4,"coast":2,"sand":0,"dunes":3})
                         elif current == "grassland":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":9,"hills":4,"sand":3,"trees":4,"swamp":4,"coast":1})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":15,"hills":4,"sand":3,"trees":4,"swamp":4,"coast":3})
                         elif current == "sand":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":9,"grassland":3,"dunes":0,"coast":1,"mountain":0})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":4,"grassland":3,"dunes":0,"coast":2,"mountain":0})
                         elif current == "dunes":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"dunes":9,"sand":3,"mountain":0})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"dunes":3,"sand":3,"mountain":0})
                         elif current == "trees":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"trees":9,"grassland":4,"forest":6})
                         elif current == "forest":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":9,"trees":3,"deepWood":3,"hills":2})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"forest":7,"trees":3,"deepWood":3,"hills":2})
                         elif current == "deepWood":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepWood":9,"forest":4,"hills":0})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"deepWood":3,"forest":4,"hills":0})
                         elif current == "hills":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"hills":9,"mountain":0,"grassland":3,"trees":3})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"hills":5,"mountain":0,"grassland":3,"trees":3})
                         elif current == "swamp":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"swamp":9,"grassland":0,"coast":4})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"swamp":5,"grassland":0,"coast":4})
                         elif current == "coast":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"coast":0,"sand":0,"swamp":0,"mountain":0,"ocean":4,"grassland":0})
                         elif current == "ocean":
@@ -432,19 +390,18 @@ def collapse_to_adj(wo,x,y,size):
     
     return wo
                 
-            
-    
-
-    
+        
+        
         
 if __name__=="__main__":
     #RUNTIME VARIABLES:
     #size
-    magnitude = 200    
+    magnitude = 160    
     #do blobfinding algorithm after generation?
     do_post_processing = True
+    
     do_coast_blobfind = True
-    do_island_blobfind = True
+    do_island_blobfind = False
     #float value percentages (each must be in range [0,0.5])
     percentCold = 0.2
     percentHot = 0.2
@@ -470,11 +427,11 @@ if __name__=="__main__":
     f.write(name)
     f.close()
     
-    f = open("dnd_wavefunctioncollapse_mapmaker.py","r")
+    f = open("rippleOut_collapse.py","r")
     thisFile = f.read()
     f.close()
     
-    name = name+"_base"
+    name = name+"_roc"
     
     f = open("./versions/"+name+"_wfc_mm.py","w")
     f.write(thisFile)
@@ -482,37 +439,47 @@ if __name__=="__main__":
     
     
     
+    
+    
+    
     theWorld = initWorld(magnitude,percentCold,percentHot)
+    
+    for i in range(magnitude):
+        for j in [0]:
+            for s in land:
+                theWorld[j][i].states[s]=False
+                theWorld[i][j].states[s]=False
+                theWorld[magnitude-j-1][i].states[s]=False
+                theWorld[i][magnitude-j-1].states[s]=False
+                
+            # theWorld[j][i]=collapse(theWorld[j][i])
+            # theWorld[i][j]=collapse(theWorld[i][j])
+            # theWorld[magnitude-j-1][i]=collapse(theWorld[magnitude-j-1][i])
+            # theWorld[i][magnitude-j-1]=collapse(theWorld[i][magnitude-j-1])
+            
+            # theWorld = update(theWorld,j,i,magnitude)  
+            # theWorld = update(theWorld,i,j,magnitude)  
+            # theWorld = update(theWorld,magnitude-j-1,i,magnitude)  
+            # theWorld = update(theWorld,i,magnitude-j-1,magnitude)  
+            
+            
+    for i in range(int(int(math.sqrt(magnitude))/2)):
+        r1 = random.randint(1,magnitude-2)
+        r2 = random.randint(1,magnitude-2)
+        while(not theWorld[r1][r2].collapsed=="none"):
+            r1 = random.randint(1,magnitude-2)
+            r2 = random.randint(1,magnitude-2)
+            
+        for s in theWorld[r1][r2].states.keys():
+            if s not in ["deepWood","mountain","grassland","dunes"]:
+                theWorld[r1][r2].states[s]=False
+            
+    
+        theWorld[r1][r2]=collapse(theWorld[r1][r2])
+        theWorld = update(theWorld,r1,r2,magnitude)              
     
     
     try:
-        for i in range(magnitude):
-            for j in [0,1]:
-                for s in land:
-                    theWorld[j][i].states[s]=False
-                    theWorld[i][j].states[s]=False
-                    theWorld[magnitude-j-1][i].states[s]=False
-                    theWorld[i][magnitude-j-1].states[s]=False
-                    
-                theWorld[j][i]=collapse(theWorld[j][i])
-                theWorld[i][j]=collapse(theWorld[i][j])
-                theWorld[magnitude-j-1][i]=collapse(theWorld[magnitude-j-1][i])
-                theWorld[i][magnitude-j-1]=collapse(theWorld[i][magnitude-j-1])
-                
-                theWorld = update(theWorld,j,i,magnitude)  
-                theWorld = update(theWorld,i,j,magnitude)  
-                theWorld = update(theWorld,magnitude-j-1,i,magnitude)  
-                theWorld = update(theWorld,i,magnitude-j-1,magnitude)  
-                
-                
-        
-        #choose a random tile to collapse first
-        r1 = random.randint(1,magnitude-2)
-        r2 = random.randint(1,magnitude-2)
-        
-        theWorld[r1][r2]=collapse(theWorld[r1][r2])
-        theWorld = update(theWorld,r1,r2,magnitude)   
-        
         resets=0
         it = 0
         skips = []
@@ -522,17 +489,39 @@ if __name__=="__main__":
             if len(collapse_next)>0:
                 minPos = 999
                 choose = []
+                chooseLand = []
+                cl = False
+                
                 for nx in collapse_next:
-                    if theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities<minPos:
-                        minPos=theWorld[nx[0]][nx[1]].possibilities
-                        choose.clear()
-                        choose.append(nx)
-                    elif theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities==minPos:
-                        choose.append(nx)
+                    if theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0:
+                        adj = get_adj(theWorld, nx[0], nx[1], magnitude)
+                        for a in adj:
+                            if theWorld[nx[0]][nx[1]].collapsed in land:
+                                cl = True
+                                chooseLand.append(nx)
+                                break
+                
+                if not cl:
+                    for nx in collapse_next:
+                        if theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities<minPos:
+                            minPos=theWorld[nx[0]][nx[1]].possibilities
+                            choose.clear()
+                            choose.append(nx)
+                        elif theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities==minPos:
+                            choose.append(nx)
+                else:
+                    for nx in chooseLand:
+                        if theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities<minPos:
+                            minPos=theWorld[nx[0]][nx[1]].possibilities
+                            choose.clear()
+                            choose.append(nx)
+                        elif theWorld[nx[0]][nx[1]].collapsed=="none" and not theWorld[nx[0]][nx[1]].possibilities==0 and theWorld[nx[0]][nx[1]].possibilities==minPos:
+                            choose.append(nx)
                 
                 if minPos==999:
                     collapse_next.clear()
                     continue
+                
                 
                 rChoose = None
                 if len(choose)==1:
@@ -546,7 +535,7 @@ if __name__=="__main__":
 
             else:
                 #brute force find another tile to collapse: rarely used but here to avoid infinite loops
-                if it%int(magnitude*4)==0:
+                if it%int(math.sqrt(magnitude))==0:
                     print(">",end="")
                 done = False
                 for i in range(magnitude):
@@ -605,7 +594,6 @@ if __name__=="__main__":
                 print("Excessive Island ",end="")
                 theWorld=blobfinding(theWorld,magnitude,"grassland",land)
             #last pass
-        
             print("Running Last-Pass cleanup routine",end="")
             for i in range(magnitude):
                 for j in range(magnitude):
@@ -626,7 +614,16 @@ if __name__=="__main__":
                                     theWorld[i][j].collapsed="ocean"
                             else:
                                 theWorld[i][j].collapsed="ocean"
-                    elif theWorld[i][j].collapsed=="ocean" and theWorld[i][j].cold:
+                    elif theWorld[i][j].collapsed=="ocean":
+                        adj = get_adj(theWorld, i, j, magnitude)
+                        brk = False
+                        for a in adj:
+                            if theWorld[a[0]][a[1]].collapsed in land:
+                                theWorld[i][j].collapsed="coast"
+                                brk = True
+                                break
+                            
+                        if not brk and theWorld[i][j].cold:
                             sir = random.randint(0,1)
                             if sir==0:
                                 theWorld[i][j].collapsed="seaIce"
@@ -646,7 +643,9 @@ if __name__=="__main__":
                 if i%int(magnitude/3)==0:
                     print(".",end="")
                     
-        print("")                   
+        print("")
+                    
+        
         
     except KeyboardInterrupt:
         pass
