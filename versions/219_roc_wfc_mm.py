@@ -253,11 +253,11 @@ def update(wo,x,y,size):
                 if(x+i>=0 and x+i<size and y+j>=0 and y+j<size):
                     if wo[x+i][y+j].collapsed=="none":
                         if current=="mountain":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":8,"hills":4,"coast":3,"sand":0,"dunes":3})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":8,"hills":4,"coast":1,"sand":0,"dunes":3})
                         elif current == "grassland":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":15,"hills":4,"sand":3,"trees":4,"swamp":4,"coast":4})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":15,"hills":4,"sand":3,"trees":4,"swamp":4,"coast":2})
                         elif current == "sand":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":4,"grassland":3,"dunes":0,"coast":3,"mountain":0})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":4,"grassland":3,"dunes":0,"coast":1,"mountain":0})
                         elif current == "dunes":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"dunes":3,"sand":3,"mountain":0})
                         elif current == "trees":

@@ -253,11 +253,11 @@ def update(wo,x,y,size):
                 if(x+i>=0 and x+i<size and y+j>=0 and y+j<size):
                     if wo[x+i][y+j].collapsed=="none":
                         if current=="mountain":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":8,"hills":4,"coast":3,"sand":0,"dunes":3})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"mountain":8,"hills":4,"coast":4,"sand":0,"dunes":3})
                         elif current == "grassland":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":15,"hills":4,"sand":3,"trees":4,"swamp":4,"coast":4})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"grassland":15,"hills":4,"sand":3,"trees":4,"swamp":4,"coast":5})
                         elif current == "sand":
-                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":4,"grassland":3,"dunes":0,"coast":3,"mountain":0})
+                            wo[x+i][y+j]=single_update(wo[x+i][y+j],{"sand":4,"grassland":3,"dunes":0,"coast":4,"mountain":0})
                         elif current == "dunes":
                             wo[x+i][y+j]=single_update(wo[x+i][y+j],{"dunes":3,"sand":3,"mountain":0})
                         elif current == "trees":
@@ -293,7 +293,6 @@ def findBlob(wo,x,y,size,name,tileset):
     blob = True
     checked = []
     non = []
-    it = 0
     
     checked.append((x,y))
     
@@ -314,10 +313,6 @@ def findBlob(wo,x,y,size,name,tileset):
         if len(adjacents)==0:
             break
         
-        it+=1
-        if it%int(size)==0:
-            print("|",end="")
-        
         for a in adjacents:
             if not wo[a[0]][a[1]].collapsed==name and wo[a[0]][a[1]].collapsed in tileset:
                 blob=False
@@ -336,11 +331,14 @@ def blobfinding(wo,size,name,tileset):
     print("Blobfinding Enabled and Running:")
     blobs = []
     checked = []
-    
+    it = 0
     for i in range(1,size-1):
         for j in range(1,size-1):
             if (i,j) not in checked:
                 if wo[i][j].collapsed==name:
+                    it+=1
+                    if it%int(size)==0:
+                        print("|",end="")
                     b=findBlob(wo,i,j,size,name,tileset)
                     for c in b[0]:
                         checked.append(c)
@@ -398,7 +396,7 @@ def collapse_to_adj(wo,x,y,size):
 if __name__=="__main__":
     #RUNTIME VARIABLES:
     #size
-    magnitude = 200    
+    magnitude = 100    
     #do blobfinding algorithm after generation?
     do_post_processing = True
     
